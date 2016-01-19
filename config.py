@@ -4,6 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     BOOTSTRAP_SERVE_LOCAL = True
+    SESSION_COOKIE_DOMAIN = '112.124.114.83:5002'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SSL_DISABLE = False
