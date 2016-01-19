@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}车位-注册{% endblock %}
+
+{% block page_content %}
+    <div class="page-header">
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+        </div>
+        <div class="col-md-5">
+            <div class="well bs-component">
+                <form class="form-horizontal" method="POST" action="{{ url_for('auth.register') }}">
+                    <fieldset>
+                        <legend>注册</legend>
+                        {{ form.hidden_tag() }}
+                        {{ wtf.form_field(form.username,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
+                        {{ wtf.form_field(form.password,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
+                        {{ wtf.form_field(form.password2,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
+                        {#                        {{ wtf.form_field(form.mobile,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}#}
+                        <div class="form-group  required">
+                            <label class="control-label  col-lg-3" for="mobile">确认密码</label>
+                            <div class=" col-lg-9">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="mobile" name="mobile">
+                                          <span class="input-group-btn">
+                                            <button class="btn btn-raised btn-primary" type="button">获取短信验证码</button>
+                                          </span>
+                                </div><!-- /input-group -->
+                            </div>
+                            <span class="material-input"></span></div>
+                        <div class="row">
+                            <div class="col-md-5 col-lg-offset-7">
+                                {#                                    {{ wtf.form_field(form.submit) }}#}
+                                <button type="submit" class="btn btn-primary">注册</button>
+                                {#                                    <input class="btn btn-default btn-raised" id="submit" name="submit" type="submit" value="登录"></input>#}
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            console.log('ok');
+
+        });
+    </script>
+{% endblock %}

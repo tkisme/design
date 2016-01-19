@@ -1,0 +1,10 @@
+*.pyc
+venv
+.DS_Store
+ignore
+.idea
+app/static/lib
+node_modules
+.env
+data-dev.db
+tmp
