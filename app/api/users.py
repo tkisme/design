@@ -3,6 +3,12 @@ from . import api
 from ..models import User, Post
 
 
+@api.route('/users/login', methods=['GET', 'POST'])
+def login():
+    #print data
+    data={'a':'a'}
+    return jsonify(data)
+
 @api.route('/users/<int:id>')
 def get_user(id):
     user = User.query.get_or_404(id)
