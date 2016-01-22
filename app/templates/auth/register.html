@@ -20,18 +20,18 @@
                         {{ wtf.form_field(form.password2,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
                         {#                        {{ wtf.form_field(form.mobile,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}#}
                         <div class="form-group  required">
-                            <label class="control-label  col-lg-3" for="mobile">确认密码</label>
+                            <label class="control-label  col-lg-3" for="mobile">短信验证码</label>
                             <div class=" col-lg-9">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="mobile" name="mobile">
                                           <span class="input-group-btn">
-                                            <button class="btn btn-raised btn-primary" type="button">获取短信验证码</button>
+                                            <button class="btn btn-raised btn-primary" type="button">短信验证码</button>
                                           </span>
                                 </div><!-- /input-group -->
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-5 col-lg-offset-7">
+                            <div class="col-md-4 col-lg-offset-8">
                                 {#                                    {{ wtf.form_field(form.submit) }}#}
                                 <button type="submit" class="btn btn-primary">注册</button>
                                 {#                                    <input class="btn btn-default btn-raised" id="submit" name="submit" type="submit" value="登录"></input>#}
