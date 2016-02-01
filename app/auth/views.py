@@ -1,10 +1,11 @@
 # coding=utf-8
-from flask import render_template, redirect, request, url_for, flash
+from sqlalchemy import exc
+from flask import render_template, redirect, request, url_for, flash, jsonify
 from flask.ext.login import login_user, logout_user, login_required, \
     current_user
-from . import auth
+from . import auth, random_gen, sms
 from .. import db
-from ..models import User
+from ..models import User, Sms
 from ..email import send_email
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, \
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
@@ -29,6 +30,9 @@ def unconfirmed():
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    # flash(u'注册成功', 'success')
+    # return redirect(url_for('main.index'))
+    # flash(u'注册成功', 'success')
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -47,20 +51,57 @@ def logout():
     return redirect(url_for('main.index'))
 
 
+@auth.route('/get_sms/<int:mobile>')
+def get_sms(mobile):
+    # print(session.get('sms_code'))
+    # print(g.get('sms_code', None))
+    # data = sms(mobile, sms_code)
+    # session.setdefault('code', sms_code)
+    # session.should_save()
+    # print(code)
+    # print(session['code'])
+    sms_code = random_gen()
+    data = sms(mobile, sms_code)
+    local_sms = db.session.query(Sms).filter(Sms.id == mobile).first()
+    if local_sms is None:
+        local_sms = Sms(id=mobile, code=sms_code)
+    else:
+        local_sms.code = sms_code
+    try:
+        db.session.add(local_sms)
+        db.session.commit()
+    except exc:
+        db.session.rollback()
+        print "%s already exists" % exc
+        flash(u"错误,请通知管理员")
+    # session['sms_code'] = sms_code
+    # if 'sms_code' in session:
+    #     print(session['sms_code'])
+    return jsonify({'data': data})
+
+
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        # user = User(email=form.email.data,
-        #             username=form.username.data,
-        #             password=form.password.data)
-        # db.session.add(user)
-        # db.session.commit()
-        # token = user.generate_confirmation_token()
-        # send_email(user.email, 'Confirm Your Account',
-        #            'auth/email/confirm', user=user, token=token)
-        flash(u'注册成功', 'success')
-        return redirect(url_for('auth.login'))
+        local_sms = db.session.query(Sms).filter(Sms.id == form.mobile.data).first()
+        # print(form.code.data, local_sms.code)
+        if int(form.code.data) == local_sms.code:
+            print(form.code.data)
+            flash(u'注册成功', 'success')
+            return redirect(url_for('.login'))
+        else:
+            flash(u'验证码错误', 'warning')
+            # user = User(email=form.email.data,
+            #             username=form.username.data,
+            #             password=form.password.data)
+            # db.session.add(user)
+            # db.session.commit()
+            # token = user.generate_confirmation_token()
+            # send_email(user.email, 'Confirm Your Account',
+            #            'auth/email/confirm', user=user, token=token)
+    # session['code'] = False
+    # session.pop('code', None)
     return render_template('auth/register.html', form=form)
 
 

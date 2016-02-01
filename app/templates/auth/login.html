@@ -12,7 +12,7 @@
         </div>
         <div class="col-md-5">
             <div class="well bs-component">
-                <form class="form-horizontal" method="POST" action="/">
+                <form class="form-horizontal" method="POST" action="{{ url_for('auth.login') }}">
                     <fieldset>
                         <legend>登录</legend>
                         {{ form.hidden_tag() }}
@@ -34,4 +34,12 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            console.log('ok');
+        });
+    </script>
 {% endblock %}

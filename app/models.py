@@ -60,6 +60,15 @@ class Follow(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class Sms(db.Model):
+    __tablename__ = 'sms'
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Sms %r>' % self.id
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -126,7 +135,7 @@ class User(UserMixin, db.Model):
                 self.role = Role.query.filter_by(default=True).first()
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(
-                self.email.encode('utf-8')).hexdigest()
+                    self.email.encode('utf-8')).hexdigest()
         self.followed.append(Follow(followed=self))
 
     @property
@@ -191,13 +200,13 @@ class User(UserMixin, db.Model):
             return False
         self.email = new_email
         self.avatar_hash = hashlib.md5(
-            self.email.encode('utf-8')).hexdigest()
+                self.email.encode('utf-8')).hexdigest()
         db.session.add(self)
         return True
 
     def can(self, permissions):
         return self.role is not None and \
-            (self.role.permissions & permissions) == permissions
+               (self.role.permissions & permissions) == permissions
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
@@ -212,9 +221,9 @@ class User(UserMixin, db.Model):
         else:
             url = 'http://www.gravatar.com/avatar'
         hash = self.avatar_hash or hashlib.md5(
-            self.email.encode('utf-8')).hexdigest()
+                self.email.encode('utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
-            url=url, hash=hash, size=size, default=default, rating=rating)
+                url=url, hash=hash, size=size, default=default, rating=rating)
 
     def follow(self, user):
         if not self.is_following(user):
@@ -228,15 +237,15 @@ class User(UserMixin, db.Model):
 
     def is_following(self, user):
         return self.followed.filter_by(
-            followed_id=user.id).first() is not None
+                followed_id=user.id).first() is not None
 
     def is_followed_by(self, user):
         return self.followers.filter_by(
-            follower_id=user.id).first() is not None
+                follower_id=user.id).first() is not None
 
     @property
     def followed_posts(self):
-        return Post.query.join(Follow, Follow.followed_id == Post.author_id)\
+        return Post.query.join(Follow, Follow.followed_id == Post.author_id) \
             .filter(Follow.follower_id == self.id)
 
     def to_json(self):
@@ -277,6 +286,7 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+
 login_manager.anonymous_user = AnonymousUser
 
 
@@ -315,8 +325,8 @@ class Post(db.Model):
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
                         'h1', 'h2', 'h3', 'p']
         target.body_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
+                markdown(value, output_format='html'),
+                tags=allowed_tags, strip=True))
 
     def to_json(self):
         json_post = {
@@ -358,8 +368,8 @@ class Comment(db.Model):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i',
                         'strong']
         target.body_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
+                markdown(value, output_format='html'),
+                tags=allowed_tags, strip=True))
 
     def to_json(self):
         json_comment = {
