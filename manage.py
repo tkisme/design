@@ -81,5 +81,15 @@ def deploy():
     # User.add_self_follows()
 
 
+@manager.command
+def tornadoserver():
+    from tornado.wsgi import WSGIContainer
+    from tornado.httpserver import HTTPServer
+    from tornado.ioloop import IOLoop
+    http_server = HTTPServer(WSGIContainer(app))
+    http_server.listen(5002)
+    IOLoop.instance().start()
+
+
 if __name__ == '__main__':
     manager.run()

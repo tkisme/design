@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}车位-注册{% endblock %}
+
+{% block page_content %}
+    <div class="page-header">
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+        </div>
+        <div class="col-md-5">
+            <div class="well bs-component">
+                <form class="form-horizontal" method="POST" action="{{ url_for('auth.register') }}">
+                    <fieldset>
+                        <legend>注册</legend>
+                        {{ form.hidden_tag() }}
+                        {{ wtf.form_field(form.username,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
+                        {{ wtf.form_field(form.password,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
+                        {{ wtf.form_field(form.password2,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
+                        {#                        {{ wtf.form_field(form.mobile,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}#}
+                        <div class="form-group  required">
+                            <label class="control-label  col-lg-3" for="mobile">{{ form.mobile.label.text }}</label>
+                            <div class=" col-lg-9">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="mobile" name="mobile">
+                                          <span class="input-group-btn">
+                                            <button class="btn btn-raised btn-primary" type="button" id="getcode">
+                                                获取短信验证码
+                                            </button>
+                                          </span>
+                                </div><!-- /input-group -->
+                            </div>
+                        </div>
+                        {{ wtf.form_field(form.code,form_type="horizontal",horizontal_columns=('lg', 3, 9)) }}
+                        <div class="row">
+                            <div class="col-md-4 col-lg-offset-8">
+                                {#                                    {{ wtf.form_field(form.submit) }}#}
+                                <button type="submit" class="btn btn-primary">注册</button>
+                                {#                                    <input class="btn btn-default btn-raised" id="submit" name="submit" type="submit" value="登录"></input>#}
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            console.log('ok');
+            // once clicked time will reduce by seconds
+            $('#getcode').click(function () {
+                // need 10s actually so once clicked count from 10
+                var timeout = 10 + 1;
+                // button_str is used to set button str
+                var button_str = '';
+                // jquery object used multi time,so use variable to spped up
+                var j_obj = $('#getcode');
+                // disabled to avoid user click multi times
+                j_obj.prop('disabled', true);
+                var refreshId = setInterval(function () {
+                    timeout -= 1;
+                    button_str = timeout + '秒后重发';
+                    if (timeout === 0) {
+                        clearInterval(refreshId);
+                        button_str = '重发验证码';
+                        // if time is up,set to enable again
+                        j_obj.prop('disabled', false);
+                    }
+                    console.log(timeout);
+                    j_obj.text(button_str);
+                }, 1000);
+                var mobile = $('#mobile').val();
+                // check mobile if mobile is true,this is tested on http://pythex.org
+                var phone = new RegExp('^(1(3|5|7|8)[0-9]{9})$');
+                if (!phone.test(mobile)) {
+                    // if not matched,notify user,use sweet alert later
+                    alert('请输入正确的手机号');
+                    return;
+                }
+                //console.log('验证码发送成功');
+                $.get("/auth/get_sms/" + mobile, function (data, status) {
+                    // success, use sweet alert later
+                    if(data.data==='000000') {
+                        console.log('验证码发送成功', data.data, status);
+                    }
+                    else{
+                        console.log('验证码发送失败');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

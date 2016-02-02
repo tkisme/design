@@ -39,3 +39,15 @@ def index():
     # return redirect(url_for('auth.login'))
     form = NameForm()
     return render_template('index.html', form=form)
+
+
+@main.route('/user/<username>')
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+    posts = pagination.items
+    return render_template('user.html', user=user, posts=posts,
+                           pagination=pagination)

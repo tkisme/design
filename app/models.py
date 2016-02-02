@@ -55,6 +55,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
+    mobile = db.Column(db.String(64))
     confirmed = db.Column(db.Boolean, default=False)
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
@@ -112,3 +113,12 @@ login_manager.anonymous_user = AnonymousUser
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Sms(db.Model):
+    __tablename__ = 'sms'
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Sms %r>' % self.id
