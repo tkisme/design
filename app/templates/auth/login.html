@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}车位-登录{% endblock %}
+
+{% block page_content %}
+    <div class="page-header">
+
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+        </div>
+        <div class="col-md-5">
+            <div class="well bs-component">
+                <form class="form-horizontal" method="POST" action="{{ url_for('auth.login') }}">
+                    <fieldset>
+                        <legend>登录</legend>
+                        {{ form.hidden_tag() }}
+                        {{ wtf.form_field(form.username,form_type="horizontal",horizontal_columns=('lg', 2, 10)) }}
+                        {{ wtf.form_field(form.password,form_type="horizontal",horizontal_columns=('lg', 2, 10)) }}
+                        {{ wtf.form_field(form.remember_me,form_type="horizontal",horizontal_columns=('lg', 2, 10)) }}
+                        <div class="row">
+                            <div class="col-md-3 col-lg-offset-2">
+                                {#                                    {{ wtf.form_field(form.submit) }}#}
+                                <button type="submit" class="btn btn-primary">登录</button>
+                                {#                                    <input class="btn btn-default btn-raised" id="submit" name="submit" type="submit" value="登录"></input>#}
+                            </div>
+                            <div class="col-md-3 col-lg-offset-2">
+                                <a class="btn btn-default" href="{{ url_for('auth.register') }}">注册</a>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            console.log('ok');
+        });
+    </script>
+{% endblock %}
